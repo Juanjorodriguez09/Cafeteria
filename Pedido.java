@@ -2,34 +2,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pedido {
-    private List<Observador> observadores = new ArrayList<>();
     private String estado;
+    private String detalles;
+    private List<Observador> observadores = new ArrayList<>();
+    private Estado estadoActual;
 
-    // Constructor para inicializar el estado
     public Pedido() {
-        this.estado = "EnEspera";
+        this.estado = "En espera";
+        this.detalles = "";
+        this.estadoActual = new EnEsperaState();
     }
 
     public void agregarObservador(Observador o) {
         observadores.add(o);
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-        notificar();
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    private void notificar() {
+    public void notificar() {
         for (Observador o : observadores) {
             o.actualizar(estado);
         }
     }
 
-    // Métodos para el patrón Memento
     public MementoPedido crearMemento() {
         return new MementoPedido(estado);
     }
@@ -37,27 +30,37 @@ public class Pedido {
     public void restaurar(MementoPedido memento) {
         this.estado = memento.getEstado();
         notificar();
+        System.out.println("Estado restaurado: " + estado + ", Detalles: " + detalles);
     }
 
-    // Método main ajustado para probar Observer y Memento
-    public static void main(String[] args) {
-        Pedido pedido = new Pedido();
-        Cliente cliente = new Cliente("Juan Manuel");
-        Caretaker caretaker = new Caretaker();
+    public void setEstadoActual(Estado estado) {
+        this.estadoActual = estado;
+        this.estado = estado.getClass().getSimpleName().replace("State", "");
+        notificar();
+    }
 
-        // Agregar observador
-        pedido.agregarObservador(cliente);
+    public void siguienteEstado() {
+        estadoActual.siguienteEstado(this);
+    }
 
-        // Guardar estado inicial
-        System.out.println("Guardando estado inicial: " + pedido.getEstado());
-        caretaker.guardarEstado(pedido.crearMemento());
+    public void cancelar() {
+        estadoActual.cancelar(this);
+    }
 
-        // Cambiar estado
-        pedido.setEstado("EnPreparacion");
-        System.out.println("Estado actual después de cambio: " + pedido.getEstado());
+    public String getEstado() {
+        return estado;
+    }
 
-        // Restaurar estado
-        pedido.restaurar(caretaker.getUltimoEstado());
-        System.out.println("Estado restaurado: " + pedido.getEstado());
+    public void setEstado(String estado) {
+        this.estado = estado;
+        notificar();
+    }
+
+    public String getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(String detalles) {
+        this.detalles = detalles;
     }
 }
