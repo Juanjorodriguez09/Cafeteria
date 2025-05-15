@@ -13,6 +13,7 @@ public class Pedido {
         this.estadoActual = new EnEsperaState();
     }
 
+    // Observer
     public void agregarObservador(Observador o) {
         observadores.add(o);
     }
@@ -23,16 +24,19 @@ public class Pedido {
         }
     }
 
+    // Memento
     public MementoPedido crearMemento() {
-        return new MementoPedido(estado);
+        return new MementoPedido(estado, detalles);
     }
 
     public void restaurar(MementoPedido memento) {
         this.estado = memento.getEstado();
+        this.detalles = memento.getDetalles();
         notificar();
         System.out.println("Estado restaurado: " + estado + ", Detalles: " + detalles);
     }
 
+    // State
     public void setEstadoActual(Estado estado) {
         this.estadoActual = estado;
         this.estado = estado.getClass().getSimpleName().replace("State", "");
@@ -49,11 +53,6 @@ public class Pedido {
 
     public String getEstado() {
         return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-        notificar();
     }
 
     public String getDetalles() {
