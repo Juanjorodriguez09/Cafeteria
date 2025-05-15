@@ -15,6 +15,9 @@ public class MediatorPedidos implements Mediator {
             barista.recibir(mensaje);
         } else if (participante instanceof Barista) {
             repartidor.recibir(mensaje);
+        } else if (participante instanceof Repartidor) {
+            cajero.recibir("Pedido entregado: " + mensaje);
         }
     }
 }
+
