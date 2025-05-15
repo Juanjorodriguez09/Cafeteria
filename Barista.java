@@ -1,7 +1,10 @@
-
 public class Barista extends Participante {
     public Barista(Mediator mediator) {
         super(mediator);
+    }
+
+    public void enviar(String mensaje) {
+        mediator.enviar(mensaje, this);
     }
 
     @Override
